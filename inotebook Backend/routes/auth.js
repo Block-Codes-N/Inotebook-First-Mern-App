@@ -2,59 +2,63 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs"); // decrypting the plain password to hash
-const jwt = require("jsonwebtoken"); // requiring import the package for login token
+const bcrypt = require("bcryptjs"); // Used for hashing and comparing passwords
+const jwt = require("jsonwebtoken"); // Used for creating JSON web tokens
 
-const JWT_SECRET = "Noman is a good boy";
+const JWT_SECRET = "Noman is a good boy"; // Secret key for JWT
 
 // Create a User using POST: (/api/auth/createuser) No authentication required.
 
 router.post(
   "/createuser",
   [
-    body("name").isLength({ min: 3 }),
-    body("email").isEmail().withMessage("Email is required"),
-    body("password").isLength({ min: 8 }),
+    body("name").isLength({ min: 3 }), // Validate the 'name' field to ensure it has at least 3 characters
+    body("email").isEmail().withMessage("Email is required"), // Validate the 'email' field to ensure it's a valid email address
+    body("password").isLength({ min: 8 }), // Validate the 'password' field to ensure it has at least 8 characters
   ],
 
   async (req, res) => {
     const errors = validationResult(req);
 
-    // if there are errors return bad request
+    // if there are validation errors, return a 400 Bad Request response
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    //Check wether the user with this email exists already
+    // Check whether a user with this email already exists
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
         return res
           .status(400)
-          .json({ error: "Sorry a user with this email already exists" });
+          .json({ error: "Sorry, a user with this email already exists" });
       }
 
-      const salt = await bcrypt.genSalt(10); //adding salt to the password
-      const secPass = await bcrypt.hash(req.body.password, salt); //converting plain password to the haash.
+      // Generate a salt and hash the user's password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
+      // Create a new user in the database
       user = await User.create({
-        //Creating user in the database
         name: req.body.name,
         email: req.body.email,
-        password: secPass,
+        password: hashedPassword,
       });
+
+      // Create a JWT token for the user
       const data = {
         user: {
           id: user.id,
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      // res.json(user);          //Response showing
+
+      // Return the JWT token as a response
       res.json({ authToken });
     } catch (error) {
-      //catching error in the code
+      // Handle any errors that occur during this process
       console.error(error.message);
-      res.status(500).send("Some Error Occured");
+      res.status(500).send("Some Error Occurred");
     }
   }
 );
@@ -64,14 +68,14 @@ router.post(
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Email is required"),
-    body("password").exists(),
+    body("email").isEmail().withMessage("Email is required"), // Validate the 'email' field to ensure it's a valid email address
+    body("password").exists(), // Ensure that the 'password' field exists
   ],
 
   async (req, res) => {
     const errors = validationResult(req);
 
-    // if there are errors return bad request
+    // If there are validation errors, return a 400 Bad Request response
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -79,26 +83,36 @@ router.post(
     const { email, password } = req.body;
 
     try {
+      // Find the user in the database by email
       let user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: "User does not exist with this credendials" });
+        return res
+          .status(400)
+          .json({ error: "User does not exist with these credentials" });
       }
+
+      // Compare the provided password with the hashed password in the database
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ error: "User does not exist with this credendials" });
+        return res
+          .status(400)
+          .json({ error: "User does not exist with these credentials" });
       }
+
+      // Create a JWT token for the user
       const data = {
         user: {
           id: user.id,
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      // res.json(user);          //Response showing
+
+      // Return the JWT token as a response
       res.json({ authToken });
     } catch (error) {
-      //catching error in the code
+      // Handle any errors that occur during this process
       console.error(error.message);
-      res.status(500).send("Internal Server Error Occured");
+      res.status(500).send("Internal Server Error Occurred");
     }
   }
 );
