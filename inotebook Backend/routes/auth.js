@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../models/User"); //Used for fetching the user models
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs"); // Used for hashing and comparing passwords
 const jwt = require("jsonwebtoken"); // Used for creating JSON web tokens
-const fetchuser = require('../middleware/fetchuser'); 
+const fetchuser = require("../middleware/fetchuser"); // Used to fetch middleware functionality
 const JWT_SECRET = "Noman is a good boy"; // Secret key for JWT
 
 //Route #1 Create a User using POST: (/api/auth/createuser) No authentication required.
@@ -117,25 +117,22 @@ router.post(
   }
 );
 
-
-
-
-
 //Route #3 Get logged In User Details using POST: (/api/auth/loggedIn) Authentication required.
 router.post(
-  "/loggedIn",fetchuser,
+  "/loggedIn",
+  fetchuser,
 
   async (req, res) => {
-try {
-  userId = req.user.id;
-  const user = await User.findById(userId).select("-password");
-  res.send(user);
-} catch (error) {
-  // Handle any errors that occur during this process
-  console.error(error.message);
-  res.status(500).send("Internal Server Error Occurred");
-}
-
-  });
+    try {
+      userId = req.user.id;
+      const user = await User.findById(userId).select("-password");
+      res.send(user); //send response to API
+    } catch (error) {
+      // Handle any errors that occur during this process
+      console.error(error.message);
+      res.status(500).send("Internal Server Error Occurred");
+    }
+  }
+);
 
 module.exports = router;
