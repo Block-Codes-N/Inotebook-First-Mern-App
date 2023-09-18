@@ -4,10 +4,10 @@ const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs"); // Used for hashing and comparing passwords
 const jwt = require("jsonwebtoken"); // Used for creating JSON web tokens
-
+const fetchuser = require('../middleware/fetchuser'); 
 const JWT_SECRET = "Noman is a good boy"; // Secret key for JWT
 
-// Create a User using POST: (/api/auth/createuser) No authentication required.
+//Route #1 Create a User using POST: (/api/auth/createuser) No authentication required.
 
 router.post(
   "/createuser",
@@ -63,7 +63,7 @@ router.post(
   }
 );
 
-// Authenticate a User using POST: (/api/auth/login) No authentication required.
+//Route #2 Authenticate a User using POST: (/api/auth/login) No authentication required.
 
 router.post(
   "/login",
@@ -116,5 +116,26 @@ router.post(
     }
   }
 );
+
+
+
+
+
+//Route #3 Get logged In User Details using POST: (/api/auth/loggedIn) Authentication required.
+router.post(
+  "/loggedIn",fetchuser,
+
+  async (req, res) => {
+try {
+  userId = req.user.id;
+  const user = await User.findById(userId).select("-password");
+  res.send(user);
+} catch (error) {
+  // Handle any errors that occur during this process
+  console.error(error.message);
+  res.status(500).send("Internal Server Error Occurred");
+}
+
+  });
 
 module.exports = router;
