@@ -4,97 +4,124 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const Notes = require("../models/Notes"); // Import the Notes model
 
+
 // Route #1: Fetch user's notes
 router.post("/notesFetched", fetchuser, async (req, res) => {
-    try {
-        // Fetch notes associated with the authenticated user
-        const notes = await Notes.find({ user: req.user.id });
-        res.json(notes); // Respond with the fetched notes
-    } catch (error) {
-        // Handle any errors that occur during this process
-        console.error(error.message);
-        res.status(500).send("Some Error Occurred");
-    }
+  try {
+    // Fetch notes associated with the authenticated user
+    const notes = await Notes.find({ user: req.user.id });
+    res.json(notes); // Respond with the fetched notes
+  } catch (error) {
+    // Handle any errors that occur during this process
+    console.error(error.message);
+    res.status(500).send("Some Error Occurred");
+  }
 });
+
 
 // Route #2: Add a new note
 router.post(
-    "/addNotes",
-    fetchuser,
-    [
-        body("title", "Enter a valid title").isLength({ min: 3 }), // Validate the 'title' field to ensure it has at least 3 characters
-        body("description", "Description must be at least 8 characters").isLength({
-            min: 8,
-        }), // Validate the 'description' field to ensure it has at least 8 characters
-    ],
-    async (req, res) => {
-        try {
-            const { title, description, tags } = req.body;
-            const errors = validationResult(req);
+  "/addNotes",
+  fetchuser,
+  [
+    body("title", "Enter a valid title").isLength({ min: 3 }), // Validate the 'title' field to ensure it has at least 3 characters
+    body("description", "Description must be at least 8 characters").isLength({
+      min: 8,
+    }), // Validate the 'description' field to ensure it has at least 8 characters
+  ],
+  async (req, res) => {
+    try {
+      const { title, description, tags } = req.body;
+      const errors = validationResult(req);
 
-            // If there are validation errors, return a 400 Bad Request response
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
+      // If there are validation errors, return a 400 Bad Request response
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-            // Create a new note with the provided data and user ID
-            const notes = new Notes({
-                title,
-                description,
-                tags,
-                user: req.user.id,
-            });
+      // Create a new note with the provided data and user ID
+      const notes = new Notes({
+        title,
+        description,
+        tags,
+        user: req.user.id,
+      });
 
-            // Save the note to the database
-            const savedNote = await notes.save();
+      // Save the note to the database
+      const savedNote = await notes.save();
 
-            res.json(savedNote); // Respond with the saved note
-        } catch (error) {
-            // Handle any errors that occur during this process
-            console.error(error.message);
-            res.status(500).send("Some Error Occurred");
-        }
+      res.json(savedNote); // Respond with the saved note
+    } catch (error) {
+      // Handle any errors that occur during this process
+      console.error(error.message);
+      res.status(500).send("Some Error Occurred");
     }
+  }
 );
+
 
 // Route #3: Updating an existing note using: Put "api/notes/updatenote/:id"
 router.put("/updatenote/:id", fetchuser, async (req, res) => {
-
-    try {
-        
-        const { title, description, tags } = req.body;
-        //Create a newNote object
-        const newNote = {};
-        if (title) {
-            newNote.title = title;
-        }
-        if (description) {
-            newNote.description = description;
-        }
-        if (tags) {
-            newNote.tags = tags;
-        }
-
-        // Find the note to be updated and update it.
-        let notes = await Notes.findById(req.params.id);
-        if (!notes) {
-            return res.status(404).send("Not Found");
-        }
-
-        if (notes.user.toString() !== req.user.id) {
-            return res.status(401).send("Not Allowed");
-        }
-
-        notes = await Notes.findByIdAndUpdate(
-            req.params.id,
-            { $set: newNote },
-            { new: true }
-        );
-        res.json({ notes });
-
-    } catch (error) {
-        return res.status(401).send("Not Allowed");
+  try {
+    const { title, description, tags } = req.body;
+    //Create a newNote object
+    const newNote = {};
+    if (title) {
+      newNote.title = title;
     }
-        // const note = Note.findByIdAndUpdate()
+    if (description) {
+      newNote.description = description;
+    }
+    if (tags) {
+      newNote.tags = tags;
+    }
+
+    // Find the note to be updated and update it.
+    let notes = await Notes.findById(req.params.id);
+    if (!notes) {
+      return res.status(404).send("Not Found");   // If the notes not found set status
+    }
+
+    if (notes.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");   // if the id of the user not matched set status
+    }
+
+    notes = await Notes.findByIdAndUpdate(   
+      req.params.id,    // wait for the match and delete the note 
+      { $set: newNote },
+      { new: true }
+    );
+    res.json({ notes });
+  } catch (error) {
+    // Handle any errors that occur during this process
+    console.error(error.message);
+    res.status(500).send("Some Error Occurred");
+  }
 });
-module.exports = router; // Export the router for use in other parts of the application
+
+
+// Route # 4: Deleting an existing note using: delete "api/notes/deletenote/:id"
+router.delete("/deletenote/:id", fetchuser, async (req, res) => {
+  try {
+
+    // Find the note to be deleted and delete it.
+    let notes = await Notes.findById(req.params.id);
+    if (!notes) {
+      return res.status(404).send("Not Found");  // If the notes not found set status
+    }
+
+    if (notes.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed"); // if the id of the user not matched set status
+    }
+
+    notes = await Notes.findByIdAndDelete(req.params.id);    // wait for the match and delete the note 
+    res.json({ success: "Your notes has been deleted", notes: notes });   // success message with notes as response to be deleted.
+
+  } catch (error) {
+    // Handle any errors that occur during this process
+    console.error(error.message);
+    res.status(500).send("Some Error Occurred");
+  }
+});
+
+module.exports = router; // Export the router for use in other parts of the application.
