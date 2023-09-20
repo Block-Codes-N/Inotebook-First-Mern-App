@@ -1,0 +1,25 @@
+
+// REACT ROUTER setup procedure for main App.js file...............................
+
+// import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+
+// <BrowserRouter>
+//     <Routes>
+//       <Route path="/home" element={<Home />} /> {/* Route to Home component */}
+//       <Route path="/about" element={<About />} /> {/* Route to About component */}
+//     </Routes>
+
+// </BrowserRouter>
+
+
+
+// REACT ROUTER setup procedure for navigation file...............................
+
+// import { Link } from "react-router-dom";
+//      <open with Link and navigate to="/">  // sample
+      
+//     <Link className="navbar-brand" to="/">Inotebook</Link>     
+//     <Link className="nav-link active" aria-current="page" to="/home">Home</Link>
+//     <Link className="nav-link" to="/about">About</Link>
+  
