@@ -1,31 +1,43 @@
 import NoteContext from "./noteContext"; // Importing the NoteContext from "./noteContext"
-
-import React, { useState } from "react"; // Importing React and useState from the React library
+import { useState } from "react";
 
 const NoteState = (props) => {
   // Defining a functional component called NoteState which takes props
+    const notesInitial = [
+        
+        {
+          "_id": "65094c474a47126b828747cc",
+          "user": "6501c4e35a545427722d3ab3",
+          "title": "Here is my title for my notes to be published",
+          "tags": "personal",
+          "description": "my description is here to be continued her is the functionality",
+          "date": "2023-09-19T07:22:47.883Z",
+          "__v": 0
+        },
+        {
+          "_id": "65094c484a47126b828747ce",
+          "user": "6501c4e35a545427722d3ab3",
+          "title": "Here is my title for my notes to be published",
+          "tags": "personal",
+          "description": "my description is here to be continued her is the functionality",
+          "date": "2023-09-19T07:22:48.510Z",
+          "__v": 0
+        },
+        {
+          "_id": "65094c494a47126b828747d0",
+          "user": "6501c4e35a545427722d3ab3",
+          "title": "Here is my title for my notes to be published",
+          "tags": "personal",
+          "description": "my description is here to be continued her is the functionality",
+          "date": "2023-09-19T07:22:49.177Z",
+          "__v": 0
+        }
+      ]
+      const [notes, setNotes] = useState(notesInitial); //
 
-    const s1 = {
-        "name": "noman",
-        "class": "5b"
-    }
-
-    const [state, setState] = useState(s1); // Using the useState hook to initialize state with the object s1
-
-    const update = () => {
-        // Defining a function called 'update'
-        setTimeout(() => {
-            setState({
-                "name": "ahsan",
-                "class": "12th b"
-            });
-            // Updating the state to a new object after a delay of 1000 milliseconds (1 second)
-        }, 1000);
-    }
-
-    return (
+ return (
         // Returning the NoteContext.Provider with a value containing the 'state' and 'update' function
-        <NoteContext.Provider value={{ state, update }}>  
+        <NoteContext.Provider value={{notes, setNotes}}>  
             {props.children} 
         </NoteContext.Provider>
     )
