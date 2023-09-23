@@ -5,3 +5,4 @@ const noteContext = createContext();
 
 // Export the context as the default export of this module
 export default noteContext;
+

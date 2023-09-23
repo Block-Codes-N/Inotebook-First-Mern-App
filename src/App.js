@@ -14,17 +14,14 @@ function App() {
       <NoteState>
         {/* Setting up routing using BrowserRouter */}
         <BrowserRouter>
-          
-            <Navbar /> {/* Displaying the Navbar component */}
-            {/* Defining routes using Routes */}
-      
-            <Routes>
-              <Route path="/" element={<Home />} />
-              {/* Route to Home component */}
-              <Route path="/about" element={<About />} />
-              {/* Route to About component */}
-            </Routes>
-      
+          <Navbar /> {/* Displaying the Navbar component */}
+          {/* Defining routes using Routes */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* Route to Home component */}
+            <Route path="/about" element={<About />} />
+            {/* Route to About component */}
+          </Routes>
         </BrowserRouter>
       </NoteState>
     </>
