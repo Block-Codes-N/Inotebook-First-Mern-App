@@ -27,7 +27,7 @@ const Home= () => {
               Password
             </label>
             <input
-              type="password"
+              type="text"
               className="form-control"
               id="exampleInputPassword1"
             />
