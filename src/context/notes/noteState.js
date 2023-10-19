@@ -80,7 +80,6 @@ const NoteState = (props) => {
   // edit notes
 
   const addNotes = (title, description, tags) => {
-    console.log("adding a new note");
     const note = {
       _id: "65094c494a47126b4828747d50",
       user: "6501c4e35a545427722d3aeb3",
@@ -101,9 +100,20 @@ const NoteState = (props) => {
   }
 
   // delete old notes
-  const deleteNote = () => {
+  // Define a function called "deleteNote" that takes an "id" parameter.
+const deleteNote = (id) => {
+  // Log a message to the console indicating the deletion of a note with the provided "id."
+  console.log("deleting the note with id " + id)
 
-  }
+  // Create a new array called "newNote" by filtering the "notes" array to remove items with a matching "_id."
+  const newNote = notes.filter((note) => {
+      return note._id !== id;
+  })
+
+  // Update the "notes" array with the newly filtered "newNote" array.
+  setNotes(newNote);
+}
+
 
   return (
     // Returning the NoteContext.Provider with a value containing the 'state' and 'update' function

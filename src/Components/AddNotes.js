@@ -2,13 +2,16 @@
 import React, { useContext, useState } from "react";
 import noteContext from "../context/notes/noteContext.js";
 
+
 // Define a functional component called AddNotes
 const AddNotes = () => {
   // Use the useContext hook to access the state and methods from the custom context
   const context = useContext(noteContext);
 
+
   // Destructure the addNotes method from the context
   const { addNotes } = context;
+
 
   // Initialize a piece of state using the useState hook to manage the form input values
   const [note, setNote] = useState({
@@ -73,7 +76,7 @@ const AddNotes = () => {
             className="btn btn-primary"
             onClick={handleClick}
           >
-            Submit
+            Add Note
           </button>
         </form>
       </div>
