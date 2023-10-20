@@ -3,6 +3,7 @@ import { useState } from "react";
 
 const NoteState = (props) => {
   // Defining a functional component called NoteState which takes props
+  const host = "http://localhost:5000";
   const notesInitial = [
     {
       _id: "65094c474a47126b828747cc",
@@ -95,9 +96,32 @@ const NoteState = (props) => {
 
   // add new notes
 
-  const editNote = () => {
+  //API calls
+
+
+  // logic for editing notes on the client side.
+  const editNote = async (id, title, description, tags) => {
+   
+  const response = await fetch(`${host}api/notes/updatenote/65094c444a47126b828747ca`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMWM0ZTM1YTU0NTQyNzcyMmQzYWIzIn0sImlhdCI6MTY5NTA0NDk4NH0.wTMS84uz0KDOtDcGbf3R4HB3wlIEQPIBP3BeC-s0CH8"
+    },
+    body: JSON.stringify(data),
+  });
+  return response.json(); 
+    for (let index = 0; index < notes.length; index++) {
+      const element = notes[index];
+      if(element._id === id) {
+        element.title = title;
+        element.description = description;
+        element.tags = tags;
+    }
 
   }
+
+}
 
   // delete old notes
   // Define a function called "deleteNote" that takes an "id" parameter.
