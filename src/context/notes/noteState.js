@@ -80,7 +80,17 @@ const NoteState = (props) => {
 
   // edit notes
 
-  const addNotes = (title, description, tags) => {
+  const addNotes = async (title, description, tags) => {
+
+    const response = await fetch(`${host}api/notes/addnote`, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMWM0ZTM1YTU0NTQyNzcyMmQzYWIzIn0sImlhdCI6MTY5NTA0NDk4NH0.wTMS84uz0KDOtDcGbf3R4HB3wlIEQPIBP3BeC-s0CH8"
+      },
+      body: JSON.stringify({title, description, tags}),
+    });
+
     const note = {
       _id: "65094c494a47126b4828747d50",
       user: "6501c4e35a545427722d3aeb3",
@@ -102,13 +112,13 @@ const NoteState = (props) => {
   // logic for editing notes on the client side.
   const editNote = async (id, title, description, tags) => {
    
-  const response = await fetch(`${host}api/notes/updatenote/65094c444a47126b828747ca`, {
+  const response = await fetch(`${host}api/notes/updatenote/${id}`, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     headers: {
       "Content-Type": "application/json",
       "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwMWM0ZTM1YTU0NTQyNzcyMmQzYWIzIn0sImlhdCI6MTY5NTA0NDk4NH0.wTMS84uz0KDOtDcGbf3R4HB3wlIEQPIBP3BeC-s0CH8"
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({title, description, tags}),
   });
   return response.json(); 
     for (let index = 0; index < notes.length; index++) {
