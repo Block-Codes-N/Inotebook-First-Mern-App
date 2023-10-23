@@ -68,8 +68,15 @@ const AddNotes = () => {
               onChange={onChange} // Call the 'onChange' function when the description input changes
             />
             <label className="form-check-label" htmlFor="exampleCheck1">
-              Check me out
+              Tags
             </label>
+            <input
+              name="tags" // Set the 'name' property to "description" for the input
+              type="text"
+              className="form-control"
+              id="tags"
+              onChange={onChange} // Call the 'onChange' function when the description input changes
+            />
           </div>
           <button
             type="submit"
