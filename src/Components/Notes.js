@@ -12,11 +12,13 @@ const Notes = () => {
 
   const updateNote = (currentNote) => {
     ref.current.click();
-    setNote({etitle: currentNote.title, edescription: currentNote.description, etags: currentNote.tags});
+    setNote({id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etags: currentNote.tags});
   };
   const ref = useRef(null);
+  const refClose = useRef(null);
 
   const [note, setNote] = useState({
+    id: "",
     title: "",
     description: "",
     tags: "default",
@@ -30,6 +32,7 @@ const Notes = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
+    refClose.current.click();
     console.log('updating the note');
   }
 
@@ -117,13 +120,14 @@ const Notes = () => {
               </div>
               <div className="modal-footer">
                 <button
+                ref={refClose}
                   type="button"
                   className="btn btn-secondary"
                   data-bs-dismiss="modal"
                 >
                   Close
                 </button>
-                <button type="button" onClick={handleClick} className="btn btn-primary">
+                <button  type="button" onClick={handleClick} className="btn btn-primary">
                   Update Note
                 </button>
               </div>
